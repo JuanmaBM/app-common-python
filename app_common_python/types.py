@@ -18,6 +18,12 @@ class AppConfig:
         self.publicPort = None
 
         #: ClowdApp deployment configuration for Clowder enabled apps.
+        self.h2cPrivatePort = None
+
+        #: ClowdApp deployment configuration for Clowder enabled apps.
+        self.h2cPublicPort = None
+
+        #: ClowdApp deployment configuration for Clowder enabled apps.
         self.webPort = None
 
         #: ClowdApp deployment configuration for Clowder enabled apps.
@@ -60,7 +66,13 @@ class AppConfig:
         self.BOPURL = None
 
         #: ClowdApp deployment configuration for Clowder enabled apps.
+        self.hashCache = None
+
+        #: ClowdApp deployment configuration for Clowder enabled apps.
         self.hostname = None
+
+        #: ClowdApp deployment configuration for Clowder enabled apps.
+        self.prometheusGateway = None
 
     @classmethod
     def dictToObject(cls, dict):
@@ -71,6 +83,10 @@ class AppConfig:
         obj.privatePort = dict.get('privatePort', None)
 
         obj.publicPort = dict.get('publicPort', None)
+
+        obj.h2cPrivatePort = dict.get('h2cPrivatePort', None)
+
+        obj.h2cPublicPort = dict.get('h2cPublicPort', None)
 
         obj.webPort = dict.get('webPort', None)
 
@@ -106,7 +122,11 @@ class AppConfig:
 
         obj.BOPURL = dict.get('BOPURL', None)
 
+        obj.hashCache = dict.get('hashCache', None)
+
         obj.hostname = dict.get('hostname', None)
+
+        obj.prometheusGateway = PrometheusGatewayConfig.dictToObject(dict.get('prometheusGateway', None))
         return obj
 
 
@@ -397,6 +417,15 @@ class DependencyEndpoint:
         self.tlsPort = None
 
         #: Dependent service connection info
+        self.h2cPort = None
+
+        #: Dependent service connection info
+        self.h2cTLSPort = None
+
+        #: Dependent service connection info
+        self.tlsCAPath = None
+
+        #: Dependent service connection info
         self.apiPath = None
 
         #: Dependent service connection info
@@ -417,6 +446,12 @@ class DependencyEndpoint:
         obj.app = dict.get('app', None)
 
         obj.tlsPort = dict.get('tlsPort', None)
+
+        obj.h2cPort = dict.get('h2cPort', None)
+
+        obj.h2cTLSPort = dict.get('h2cTLSPort', None)
+
+        obj.tlsCAPath = dict.get('tlsCAPath', None)
 
         obj.apiPath = dict.get('apiPath', None)
 
@@ -447,6 +482,15 @@ class PrivateDependencyEndpoint:
         #: Dependent service connection info
         self.tlsPort = None
 
+        #: Dependent service connection info
+        self.h2cPort = None
+
+        #: Dependent service connection info
+        self.h2cTLSPort = None
+
+        #: Dependent service connection info
+        self.tlsCAPath = None
+
     @classmethod
     def dictToObject(cls, dict):
         if dict is None:
@@ -462,6 +506,36 @@ class PrivateDependencyEndpoint:
         obj.app = dict.get('app', None)
 
         obj.tlsPort = dict.get('tlsPort', None)
+
+        obj.h2cPort = dict.get('h2cPort', None)
+
+        obj.h2cTLSPort = dict.get('h2cTLSPort', None)
+
+        obj.tlsCAPath = dict.get('tlsCAPath', None)
+        return obj
+
+
+class PrometheusGatewayConfig:
+    """ Prometheus Gateway Configuration
+    """
+
+    def __init__(self):
+
+        #: Prometheus Gateway Configuration
+        self.hostname = None
+
+        #: Prometheus Gateway Configuration
+        self.port = None
+
+    @classmethod
+    def dictToObject(cls, dict):
+        if dict is None:
+            return None
+        obj = cls()
+
+        obj.hostname = dict.get('hostname', None)
+
+        obj.port = dict.get('port', None)
         return obj
 
 
