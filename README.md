@@ -12,7 +12,7 @@ pip install app-common-python
 
 ## Prerequisites
 
-- Python 3.8 or higher (tested with Python 3.8–3.12)
+- Python 3.10+
 - Applications running in a Clowder-enabled environment with the `ACG_CONFIG` environment variable set
 
 ## Usage
