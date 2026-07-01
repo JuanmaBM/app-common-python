@@ -100,14 +100,14 @@ The library uses [setuptools_scm][setuptools-scm] for automatic versioning. Vers
 - Tagged commits (e.g., `v1.2.3`) → version `1.2.3`
 - Commits after a tag → version `1.2.3.devN+gHASH`
 
-This eliminates manual version bumps. The [pyproject.toml][pyproject-file] declares `setuptools_scm[toml]>=7.0.0` as a build dependency.
+This eliminates manual version bumps. The [pyproject.toml][pyproject-file] declares `setuptools_scm[toml]` as a build dependency.
 
 ### CI/CD Pipeline
 
 The [GitHub Actions workflow][ci-workflow] runs on pull requests, pushes to `master`, and release events:
 
 1. **dist** — Builds source distribution and wheel using `python -m build`.
-2. **test** — Installs the wheel and runs pytest across Python 3.8–3.12.
+2. **test** — Installs the wheel and runs pytest across Python 3.10+.
 3. **dist_check** — Validates distribution metadata with `twine check --strict`.
 4. **dist_upload** — Publishes to PyPI on release events (requires `pypi_token` secret).
 
@@ -176,7 +176,7 @@ There are no tests for the generated code itself (yacg's output is assumed corre
 - Matches the flat structure of the JSON schema (no nested modules in the schema definition).
 - Easier to verify generation output (diff a single file instead of a directory tree).
 
-**Tradeoff:** The `types.py` file is large (19,313 lines at time of writing). IDEs may struggle with autocomplete performance.
+**Tradeoff:** As the schema grows, the single `types.py` file will grow correspondingly, which could eventually impact IDE autocomplete performance.
 
 ## Future Considerations
 
