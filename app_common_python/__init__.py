@@ -1,7 +1,7 @@
 import json
 import os
 import tempfile
-from .types import AppConfig
+from .types import AppConfig, V2Endpoint
 
 
 class SmartAppConfig(AppConfig):
@@ -60,6 +60,20 @@ if LoadedConfig.privateEndpoints and len(LoadedConfig.privateEndpoints) > 0:
         if endpoint.app not in PrivateDependencyEndpoints:
             PrivateDependencyEndpoints[endpoint.app] = {}
         PrivateDependencyEndpoints[endpoint.app][endpoint.name] = endpoint
+
+DependencyEndpointsV2 = {}
+if LoadedConfig.dependencyEndpoints:
+    DependencyEndpointsV2 = LoadedConfig.dependencyEndpoints
+
+
+def get_v2_dependency_endpoint(app, endpoint):
+    if not DependencyEndpointsV2:
+        return None
+    app_endpoints = DependencyEndpointsV2.get(app)
+    if not app_endpoints:
+        return None
+    return app_endpoints.get(endpoint)
+
 
 KafkaServers = []
 if LoadedConfig.kafka and len(LoadedConfig.kafka.brokers) > 0:

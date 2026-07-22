@@ -90,5 +90,22 @@
             "hostname": "endpoint2.svc",
             "port": 10000
         }
-    ]
+    ],
+    "dependencyEndpoints": {
+        "v2": {
+            "app1": {
+                "service": {
+                    "uri": "https://app1-service.env.svc:8443",
+                    "ca_certificate": "/cdapp/certs/service-ca.crt",
+                    "authenticated": false
+                }
+            },
+            "app2": {
+                "api": {
+                    "uri": "https://app2-api.env.svc:8443",
+                    "authenticated": true
+                }
+            }
+        }
+    }
 }
