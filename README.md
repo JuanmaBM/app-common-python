@@ -31,6 +31,39 @@ The ``clowder`` library also comes with several other helpers
   for the public services of requested applications.
 * ``PrivateDependencyEndpoints`` - returns a nested map using \[appName\]\[deploymentName\]
   for the private services of requested applications.
+* ``DependencyEndpointsV2`` - returns a nested map using \[appName\]\[endpointName\]
+  for V2 dependency endpoints with simplified connection info.
+* ``get_v2_dependency_endpoint(app, endpoint)`` - returns a single V2 endpoint
+  or ``None`` if not found.
+
+V2 Dependency Endpoints
+-----------------------
+
+V2 endpoints provide simplified, opinionated configuration for service-to-service
+connections. Each endpoint includes a single URI, an authentication flag, and an
+optional CA certificate path.
+
+```python
+from app_common_python import DependencyEndpointsV2, get_v2_dependency_endpoint, isClowderEnabled
+
+if isClowderEnabled():
+    # Access via the nested map
+    rbac = DependencyEndpointsV2["rbac"]["service"]
+    print(f"URI: {rbac.uri}")
+    print(f"Authenticated: {rbac.authenticated}")
+    if rbac.ca_certificate:
+        print(f"CA Cert: {rbac.ca_certificate}")
+
+    # Or use the helper function
+    ep = get_v2_dependency_endpoint("rbac", "service")
+    if ep:
+        print(f"URI: {ep.uri}")
+```
+
+V2 endpoint fields:
+* ``uri`` - Full URI for the service (e.g. ``https://rbac-service.env.svc:8443``)
+* ``authenticated`` - ``True`` for cross-cluster (ClowdAppRef), ``False`` for in-cluster
+* ``ca_certificate`` - Path to CA certificate for TLS (only present for in-cluster TLS)
 
 Testing
 -------
