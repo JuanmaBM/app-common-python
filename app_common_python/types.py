@@ -57,6 +57,9 @@ class AppConfig:
         self.featureFlags = None
 
         #: ClowdApp deployment configuration for Clowder enabled apps.
+        self.dependencyEndpoints = None
+
+        #: ClowdApp deployment configuration for Clowder enabled apps.
         self.endpoints = []
 
         #: ClowdApp deployment configuration for Clowder enabled apps.
@@ -109,6 +112,17 @@ class AppConfig:
         obj.inMemoryDb = InMemoryDBConfig.dictToObject(dict.get('inMemoryDb', None))
 
         obj.featureFlags = FeatureFlagsConfig.dictToObject(dict.get('featureFlags', None))
+
+        depEndpoints = dict.get('dependencyEndpoints', None)
+        if depEndpoints is not None:
+            v2Dict = depEndpoints.get('v2', None)
+            if v2Dict is not None:
+                obj.dependencyEndpoints = {}
+                for appName, endpoints in v2Dict.items():
+                    obj.dependencyEndpoints[appName] = {}
+                    for endpointName, endpointData in endpoints.items():
+                        obj.dependencyEndpoints[appName][endpointName] = \
+                            V2Endpoint.dictToObject(endpointData)
 
         arrayEndpoints = dict.get('endpoints', [])
         for elemEndpoints in arrayEndpoints:
@@ -392,6 +406,32 @@ class FeatureFlagsConfig:
         obj.clientAccessToken = dict.get('clientAccessToken', None)
 
         obj.scheme = FeatureFlagsConfigSchemeEnum.valueForString(dict.get('scheme', None))
+        return obj
+
+
+class V2Endpoint:
+    """ V2 dependency endpoint with simplified connection info.
+    """
+
+    def __init__(self):
+
+        self.uri = None
+
+        self.ca_certificate = None
+
+        self.authenticated = None
+
+    @classmethod
+    def dictToObject(cls, dict):
+        if dict is None:
+            return None
+        obj = cls()
+
+        obj.uri = dict.get('uri', None)
+
+        obj.ca_certificate = dict.get('ca_certificate', None)
+
+        obj.authenticated = dict.get('authenticated', None)
         return obj
 
 

@@ -89,6 +89,9 @@
                 },
                 "prometheusGateway": {
                     "$ref": "#/definitions/PrometheusGatewayConfig"
+                },
+                "dependencyEndpoints": {
+                    "$ref": "#/definitions/DependencyEndpointsConfig"
                 }
             },
             "required": [
@@ -579,6 +582,46 @@
                 "port",
                 "app"
             ]
+        },
+        "V2Endpoint": {
+            "id": "v2Endpoint",
+            "type": "object",
+            "description": "V2 dependency endpoint with simplified connection info",
+            "properties": {
+                "uri": {
+                    "description": "The URI of the dependent service.",
+                    "type": "string"
+                },
+                "ca_certificate": {
+                    "description": "Path to the CA certificate for TLS connections to this service.",
+                    "type": "string"
+                },
+                "authenticated": {
+                    "description": "Whether the endpoint requires authentication.",
+                    "type": "boolean"
+                }
+            },
+            "required": [
+                "uri",
+                "authenticated"
+            ]
+        },
+        "DependencyEndpointsConfig": {
+            "id": "dependencyEndpointsConfig",
+            "type": "object",
+            "description": "V2 dependency endpoints configuration, keyed by app name and endpoint name",
+            "properties": {
+                "v2": {
+                    "description": "V2 format dependency endpoints, organized as app -> endpoint -> config",
+                    "type": "object",
+                    "additionalProperties": {
+                        "type": "object",
+                        "additionalProperties": {
+                            "$ref": "#/definitions/V2Endpoint"
+                        }
+                    }
+                }
+            }
         },
         "PrometheusGatewayConfig": {
             "id": "prometheusGatewayConfig",

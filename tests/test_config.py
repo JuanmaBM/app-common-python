@@ -1,4 +1,10 @@
-from app_common_python import LoadedConfig, KafkaTopics, DependencyEndpoints, ObjectBuckets, KafkaServers, isClowderEnabled, PrivateDependencyEndpoints
+from app_common_python import (
+    LoadedConfig, KafkaTopics, DependencyEndpoints, ObjectBuckets,
+    KafkaServers, isClowderEnabled, PrivateDependencyEndpoints,
+    DependencyEndpointsV2, get_v2_dependency_endpoint, loadConfig,
+)
+from app_common_python.types import V2Endpoint
+
 
 def test_load_config():
     assert LoadedConfig.kafka.brokers[0].port == 27015, "Port failed to be found"
@@ -21,3 +27,49 @@ def test_load_config():
     assert isClowderEnabled() == True
     assert LoadedConfig.featureFlags.hostname == "ff-server.server.example.com"
     assert LoadedConfig.hostname == "testing"
+
+
+def test_v2_dependency_endpoints_parsed():
+    assert "app1" in DependencyEndpointsV2
+    assert "app2" in DependencyEndpointsV2
+    assert "service" in DependencyEndpointsV2["app1"]
+    assert "api" in DependencyEndpointsV2["app2"]
+
+
+def test_v2_endpoint_fields():
+    ep = DependencyEndpointsV2["app1"]["service"]
+    assert isinstance(ep, V2Endpoint)
+    assert ep.uri == "https://app1-service.env.svc:8443"
+    assert ep.ca_certificate == "/cdapp/certs/service-ca.crt"
+    assert ep.authenticated is False
+
+
+def test_v2_endpoint_authenticated_cross_cluster():
+    ep = DependencyEndpointsV2["app2"]["api"]
+    assert ep.uri == "https://app2-api.env.svc:8443"
+    assert ep.ca_certificate is None
+    assert ep.authenticated is True
+
+
+def test_get_v2_dependency_endpoint():
+    ep = get_v2_dependency_endpoint("app1", "service")
+    assert ep is not None
+    assert ep.uri == "https://app1-service.env.svc:8443"
+
+
+def test_get_v2_dependency_endpoint_missing_app():
+    assert get_v2_dependency_endpoint("nonexistent", "service") is None
+
+
+def test_get_v2_dependency_endpoint_missing_endpoint():
+    assert get_v2_dependency_endpoint("app1", "nonexistent") is None
+
+
+def test_v2_missing_from_config():
+    config = loadConfig(None)
+    assert config.dependencyEndpoints is None
+
+
+def test_v1_endpoints_unchanged():
+    assert DependencyEndpoints["app1"]["endpoint1"].port == 8000
+    assert PrivateDependencyEndpoints["app1"]["endpoint1"].port == 10000
